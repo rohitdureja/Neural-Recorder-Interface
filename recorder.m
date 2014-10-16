@@ -22,7 +22,7 @@ function varargout = recorder(varargin)
 
 % Edit the above text to modify the response to help recorder
 
-% Last Modified by GUIDE v2.5 14-Oct-2014 17:40:07
+% Last Modified by GUIDE v2.5 16-Oct-2014 16:57:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,7 +59,16 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
-imshow('UPenn_logo.png', 'Parent', handles.axes6);
+imshow('UPenn_logo.png', 'Parent', handles.axes1);
+
+handles.countChannels = 0; % count of number of channels
+handles.selectedChannels = []; % array holding selected channels
+guidata(hObject, handles);
+set(handles.edit1, 'String', num2str(handles.countChannels));
+set(handles.pushbutton3, 'Enable', 'off');
+set(handles.pushbutton1, 'Enable', 'off');
+global COMsetup
+COMsetup = 0;
 
 % UIWAIT makes recorder wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -83,6 +92,49 @@ function figure1_ResizeFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
+% --- Executes on button press in checkbox1.
+function checkbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox1 = get(handles.checkbox1, 'Value');
+if(checkbox1 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox1, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 0];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=0);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
+
+
+% --- If Enable == 'on', executes on mouse press in 5 pixel border.
+% --- Otherwise, executes on mouse press in 5 pixel border or over checkbox1.
+function checkbox1_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% --- Executes on key press with focus on checkbox1 and none of its controls.
+function checkbox1_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to checkbox1 (see GCBO)
+% eventdata  structure with the following fields (see UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
 % --- Executes on button press in checkbox2.
 function checkbox2_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox2 (see GCBO)
@@ -90,310 +142,865 @@ function checkbox2_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox2
+checkbox2 = get(handles.checkbox2, 'Value');
+if(checkbox2 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox2, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 1];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=1);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- If Enable == 'on', executes on mouse press in 5 pixel border.
-% --- Otherwise, executes on mouse press in 5 pixel border or over checkbox2.
-function checkbox2_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to checkbox2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on key press with focus on checkbox2 and none of its controls.
-function checkbox2_KeyPressFcn(hObject, eventdata, handles)
-% hObject    handle to checkbox2 (see GCBO)
-% eventdata  structure with the following fields (see UICONTROL)
-%	Key: name of the key that was pressed, in lower case
-%	Character: character interpretation of the key(s) that was pressed
-%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in checkbox3.
+% --- Executes on button press in checkbox1.
 function checkbox3_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox3 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox3
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox3 = get(handles.checkbox3, 'Value');
+if(checkbox3 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox3, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 2];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=2);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox4.
+% --- Executes on button press in checkbox1.
 function checkbox4_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox4 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox4
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox4 = get(handles.checkbox4, 'Value');
+if(checkbox4 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox4, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 3];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=3);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox5.
+% --- Executes on button press in checkbox1.
 function checkbox5_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox5 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox5
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox5 = get(handles.checkbox5, 'Value');
+if(checkbox5 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox5, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 4];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=4);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox6.
+% --- Executes on button press in checkbox1.
 function checkbox6_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox6 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox6
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox6 = get(handles.checkbox6, 'Value');
+if(checkbox6 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox6, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 5];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=5);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
 
-% --- Executes on button press in checkbox7.
+% --- Executes on button press in checkbox1.
 function checkbox7_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox7 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox7
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox7 = get(handles.checkbox7, 'Value');
+if(checkbox7 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox7, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 6];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=6);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox8.
+% --- Executes on button press in checkbox1.
 function checkbox8_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox8 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox8
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox8 = get(handles.checkbox8, 'Value');
+if(checkbox8 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox8, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 7];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=7);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox9.
+% --- Executes on button press in checkbox1.
 function checkbox9_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox9 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox9
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox9 = get(handles.checkbox9, 'Value');
+if(checkbox9 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox9, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 8];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=8);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox10.
+% --- Executes on button press in checkbox1.
 function checkbox10_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox10 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox10
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox10 = get(handles.checkbox10, 'Value');
+if(checkbox10 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox10, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 9];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=9);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox11.
+% --- Executes on button press in checkbox1.
 function checkbox11_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox11 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox11
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox11 = get(handles.checkbox11, 'Value');
+if(checkbox11 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox11, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 10];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=10);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox12.
+% --- Executes on button press in checkbox1.
 function checkbox12_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox12 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox12
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox12 = get(handles.checkbox12, 'Value');
+if(checkbox12 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox12, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 11];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=11);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox13.
+% --- Executes on button press in checkbox1.
 function checkbox13_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox13 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox13
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox13 = get(handles.checkbox13, 'Value');
+if(checkbox13 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox13, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 12];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+                handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=12);
 
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-% --- Executes on button press in checkbox14.
+% --- Executes on button press in checkbox1.
 function checkbox14_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox14 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox14
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox14 = get(handles.checkbox14, 'Value');
+if(checkbox14 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox14, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 13];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=13);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox15.
+% --- Executes on button press in checkbox1.
 function checkbox15_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox15 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox15
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox15 = get(handles.checkbox15, 'Value');
+if(checkbox15 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox15, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 14];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=14);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox16.
+% --- Executes on button press in checkbox1.
 function checkbox16_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox16 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox16
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox16 = get(handles.checkbox16, 'Value');
+if(checkbox16 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox16, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 15];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=15);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox17.
+% --- Executes on button press in checkbox1.
 function checkbox17_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox17 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox17
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox17 = get(handles.checkbox17, 'Value');
+if(checkbox17 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox17, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 16];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=16);
+        
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox18.
+% --- Executes on button press in checkbox1.
 function checkbox18_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox18 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox18
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox18 = get(handles.checkbox18, 'Value');
+if(checkbox18 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox18, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 17];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=17);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox19.
+% --- Executes on button press in checkbox1.
 function checkbox19_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox19 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox19
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox19 = get(handles.checkbox19, 'Value');
+if(checkbox19 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox19, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 18];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=18);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox20.
+% --- Executes on button press in checkbox1.
 function checkbox20_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox20 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox20
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox20 = get(handles.checkbox20, 'Value');
+if(checkbox20 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox20, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 19];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=19);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox21.
+% --- Executes on button press in checkbox1.
 function checkbox21_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox21 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox21
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox21 = get(handles.checkbox21, 'Value');
+if(checkbox21 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox21, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 20];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=20);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox22.
+% --- Executes on button press in checkbox1.
 function checkbox22_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox22 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox22
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox22 = get(handles.checkbox22, 'Value');
+if(checkbox22 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox22, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 21];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=21);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox23.
+% --- Executes on button press in checkbox1.
 function checkbox23_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox23 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox23
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox23 = get(handles.checkbox23, 'Value');
+if(checkbox23 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox23, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 22];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=22);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox24.
+% --- Executes on button press in checkbox1.
 function checkbox24_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox24 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox24
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox24 = get(handles.checkbox24, 'Value');
+if(checkbox24 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox24, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 23];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=23);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox25.
+% --- Executes on button press in checkbox1.
 function checkbox25_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox25 (see GCBO)
+% hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox25
+% Hint: get(hObject,'Value') returns toggle state of checkbox1
+checkbox25 = get(handles.checkbox25, 'Value');
+if(checkbox25 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox25, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 24];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=24);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox43.
-function checkbox43_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox43 (see GCBO)
+% --- Executes on button press in checkbox26.
+function checkbox26_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox26 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox43
+% Hint: get(hObject,'Value') returns toggle state of checkbox26
+checkbox26 = get(handles.checkbox26, 'Value');
+if(checkbox26 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox26, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 25];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=25);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox44.
-function checkbox44_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox44 (see GCBO)
+% --- Executes on button press in checkbox27.
+function checkbox27_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox27 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox44
+% Hint: get(hObject,'Value') returns toggle state of checkbox27
+checkbox27 = get(handles.checkbox27, 'Value');
+if(checkbox27 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox27, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 26];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=26);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox45.
-function checkbox45_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox45 (see GCBO)
+% --- Executes on button press in checkbox28.
+function checkbox28_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox28 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox45
+% Hint: get(hObject,'Value') returns toggle state of checkbox28
+checkbox28 = get(handles.checkbox28, 'Value');
+if(checkbox28 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox28, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 27];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=27);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox46.
-function checkbox46_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox46 (see GCBO)
+% --- Executes on button press in checkbox29.
+function checkbox29_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox29 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox46
+% Hint: get(hObject,'Value') returns toggle state of checkbox29
+checkbox29 = get(handles.checkbox29, 'Value');
+if(checkbox29 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox29, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 28];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=28);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox47.
-function checkbox47_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox47 (see GCBO)
+% --- Executes on button press in checkbox30.
+function checkbox30_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox30 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox47
+% Hint: get(hObject,'Value') returns toggle state of checkbox30
+checkbox30 = get(handles.checkbox30, 'Value');
+if(checkbox30 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox30, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 29];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=29);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox48.
-function checkbox48_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox48 (see GCBO)
+% --- Executes on button press in checkbox31.
+function checkbox31_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox31 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox48
+% Hint: get(hObject,'Value') returns toggle state of checkbox31
+checkbox31 = get(handles.checkbox31, 'Value');
+if(checkbox31 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox31, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 30];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=30);
+        guidata(hObject, handles);
+    end
+end
+set(handles.edit1, 'String', num2str(handles.countChannels));
 
-
-% --- Executes on button press in checkbox49.
-function checkbox49_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox49 (see GCBO)
+% --- Executes on button press in checkbox32.
+function checkbox32_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox32 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox49
-
-
-% --- Executes on button press in checkbox50.
-function checkbox50_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox50 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox50
-
+% Hint: get(hObject,'Value') returns toggle state of checkbox32
+checkbox32 = get(handles.checkbox32, 'Value');
+if(checkbox32 == 1)
+   if(handles.countChannels == 4)
+      error = msgbox('Cannot selected more than 4 channels');
+      set(handles.checkbox32, 'Value', 0);
+   else
+       handles.countChannels = handles.countChannels + 1;
+       handles.selectedChannels = [handles.selectedChannels 31];
+       guidata(hObject, handles);
+   end 
+else
+    if(handles.countChannels > 0)
+        handles.countChannels = handles.countChannels - 1;
+        handles.selectedChannels = handles.selectedChannels(handles.selectedChannels~=31);
+        guidata(hObject, handles);
+    end
+end
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global start
+global syspause
+global COMsetup
+global s
+start = 0;
+syspause = 0;
+COMsetup = 0;
+disp('Recording stopped');
+
+%Stop the recorder
+fwrite(s, 13, 'uint8');
+pause(0.1);
+
+%Close the COM port
+fclose(s);
+
+% Enable reconfiguration
+set(handles.edit2, 'Enable', 'On');
+set(handles.edit3, 'Enable', 'On');
+set(handles.edit4, 'Enable', 'On');
+set(handles.edit5, 'Enable', 'On');
+set(handles.checkbox1, 'Enable', 'On');
+set(handles.checkbox2, 'Enable', 'On');
+set(handles.checkbox3, 'Enable', 'On');
+set(handles.checkbox4, 'Enable', 'On');
+set(handles.checkbox5, 'Enable', 'On');
+set(handles.checkbox6, 'Enable', 'On');
+set(handles.checkbox7, 'Enable', 'On');
+set(handles.checkbox8, 'Enable', 'On');
+set(handles.checkbox9, 'Enable', 'On');
+set(handles.checkbox10, 'Enable', 'On');
+set(handles.checkbox11, 'Enable', 'On');
+set(handles.checkbox12, 'Enable', 'On');
+set(handles.checkbox13, 'Enable', 'On');
+set(handles.checkbox14, 'Enable', 'On');
+set(handles.checkbox15, 'Enable', 'On');
+set(handles.checkbox16, 'Enable', 'On');
+set(handles.checkbox17, 'Enable', 'On');
+set(handles.checkbox18, 'Enable', 'On');
+set(handles.checkbox19, 'Enable', 'On');
+set(handles.checkbox20, 'Enable', 'On');
+set(handles.checkbox21, 'Enable', 'On');
+set(handles.checkbox22, 'Enable', 'On');
+set(handles.checkbox23, 'Enable', 'On');
+set(handles.checkbox24, 'Enable', 'On');
+set(handles.checkbox25, 'Enable', 'On');
+set(handles.checkbox26, 'Enable', 'On');
+set(handles.checkbox27, 'Enable', 'On');
+set(handles.checkbox28, 'Enable', 'On');
+set(handles.checkbox29, 'Enable', 'On');
+set(handles.checkbox30, 'Enable', 'On');
+set(handles.checkbox31, 'Enable', 'On');
+set(handles.checkbox32, 'Enable', 'On');
 
 
 % --- Executes on button press in pushbutton2.
@@ -401,82 +1008,263 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('Now plotting data\n');
-axes(handles.axes2);
-% Set the COM interface
-s = serial('COM9');
-set(s, 'InputBufferSize', 4096);
-set(s, 'FlowControl', 'hardware');
-set(s, 'BaudRate', 115200);
-set(s, 'Parity', 'none');
-set(s, 'DataBits', 8);
-set(s, 'StopBit', 1);
-set(s, 'Timeout', 1);
-
-% Check the properties of the COM interface
-disp(get(s,'Name'));
-prop(1)=(get(s,'BaudRate'));
-prop(2)=(get(s,'DataBits'));
-prop(3)=(get(s, 'StopBit'));
-prop(4)=(get(s, 'InputBufferSize'));
-disp(['Port Setup Done!',num2str(prop)]);
-
-%Open the serial port
-fopen(s);           
-
-% Design the filter
-flp = 300;
-fhi = 6000;
-npts = 2048;
-delt = 1/20000;
-n = 2;
-fnq = 1/(2*delt);
-Wn = [flp/fnq fhi/fnq];
-[b,a] = butter(n, Wn);
-
-% Real time plot
-n = 0;
-t = 0;
-% x = linspace(t, t + 0.2, 4096);
-% signal = fread(s, 4096);
-% filt_signal = filter(b, a, signal);
-% set(gcf, 'color', 'white');
-% drawnow;
-% plot(x, filt_signal,'-dk'), axis([t t + 0.2 -150 150]);
-% grid on;
-% title('Sine Wave');
-% xlabel('Time');
-% ylabel('Amplitude');
-% t = t + 0.02;
-while (n < 200)
-    %x = linspace(0, 0.2, 4096);
-%     signal_temp = fread(s, 512);
-%     signal = [signal; signal_temp];
-%     signal = signal(end-4096+1:end);
-    signal = fread(s);
-    x = linspace(0, 0.2, length(signal));
-    filt_signal = filter(b, a, signal);
-    %set(gcf, 'color', 'white');
-    drawnow;
-    plot(x, filt_signal,'-'), axis([0 0.2 -127 127]);
-    grid on;
-    title('Sine Wave');
-    xlabel('Time');
-    ylabel('Amplitude');
-    n = n + 1;
-%     t = t + 0.02;
-   % t = t + 0.2;
-    pause(0.1);
+if(isempty(handles.selectedChannels))
+    error = msgbox('No channel(s) selected!');
+else
+    global COMsetup
+    global s
+    if(COMsetup == 0) % first time configuration
+        disp('Now setting up');
+        % get configuration parameters
+        handles.selectedChannels = sort(handles.selectedChannels);
+        numofchannels = length(handles.selectedChannels)
+        samplingfrequency = str2num(get(handles.edit2, 'String'))
+        buffersize = str2num(get(handles.edit3, 'String'))
+        flp = str2num(get(handles.edit4, 'String'));
+        fhp = str2num(get(handles.edit5, 'String'));
+        
+        % Disable any changes
+        set(handles.edit2, 'Enable', 'Off');
+        set(handles.edit3, 'Enable', 'Off');
+        set(handles.edit4, 'Enable', 'Off');
+        set(handles.edit5, 'Enable', 'Off');
+        set(handles.checkbox1, 'Enable', 'Off');
+        set(handles.checkbox2, 'Enable', 'Off');
+        set(handles.checkbox3, 'Enable', 'Off');
+        set(handles.checkbox4, 'Enable', 'Off');
+        set(handles.checkbox5, 'Enable', 'Off');
+        set(handles.checkbox6, 'Enable', 'Off');
+        set(handles.checkbox7, 'Enable', 'Off');
+        set(handles.checkbox8, 'Enable', 'Off');
+        set(handles.checkbox9, 'Enable', 'Off');
+        set(handles.checkbox10, 'Enable', 'Off');
+        set(handles.checkbox11, 'Enable', 'Off');
+        set(handles.checkbox12, 'Enable', 'Off');
+        set(handles.checkbox13, 'Enable', 'Off');
+        set(handles.checkbox14, 'Enable', 'Off');
+        set(handles.checkbox15, 'Enable', 'Off');
+        set(handles.checkbox16, 'Enable', 'Off');
+        set(handles.checkbox17, 'Enable', 'Off');
+        set(handles.checkbox18, 'Enable', 'Off');
+        set(handles.checkbox19, 'Enable', 'Off');
+        set(handles.checkbox20, 'Enable', 'Off');
+        set(handles.checkbox21, 'Enable', 'Off');
+        set(handles.checkbox22, 'Enable', 'Off');
+        set(handles.checkbox23, 'Enable', 'Off');
+        set(handles.checkbox24, 'Enable', 'Off');
+        set(handles.checkbox25, 'Enable', 'Off');
+        set(handles.checkbox26, 'Enable', 'Off');
+        set(handles.checkbox27, 'Enable', 'Off');
+        set(handles.checkbox28, 'Enable', 'Off');
+        set(handles.checkbox29, 'Enable', 'Off');
+        set(handles.checkbox30, 'Enable', 'Off');
+        set(handles.checkbox31, 'Enable', 'Off');
+        set(handles.checkbox32, 'Enable', 'Off');
+        
+        % set display properties
+        for i=1:numofchannels
+            if(i==1)
+               set(handles.text8, 'String', strcat('Channel-',num2str(handles.selectedChannels(i)+1)));
+            end
+            if(i==2)
+               set(handles.text9, 'String', strcat('Channel-',num2str(handles.selectedChannels(i)+1))); 
+            end
+            if(i==3)
+                set(handles.text10, 'String', strcat('Channel-',num2str(handles.selectedChannels(i)+1)));
+            end
+            if(i==4)
+                set(handles.text11, 'String', strcat('Channel-',num2str(handles.selectedChannels(i)+1)));
+            end
+        end
+        
+        %set up COM port
+        s = serial('COM9');
+        set(s, 'InputBufferSize', 4096);
+        set(s, 'BaudRate', 115200);
+        set(s, 'Parity', 'none');
+        set(s, 'DataBits', 8);
+        set(s, 'StopBit', 1);
+        set(s, 'Timeout', 1);
+        
+        % Design the filter, 4th order butterworth
+        delt = 1/samplingfrequency;
+        n = 4;
+        fnq = 1/(2*delt);
+        Wn = [flp/fnq fhp/fnq];
+        [b,a] = butter(n, Wn);
+        
+        fopen(s); % Open the COM port
+       
+        %Transmit configuration parameters
+        fwrite(s, [3 samplingfrequency], 'uint16');
+        pause(0.1);
+        fwrite(s, [2 buffersize], 'uint16');
+        pause(0.1);
+        fwrite(s, [1 numofchannels], 'uint16');
+        pause(0.1);
+        fwrite(s, 10, 'uint8');
+        pause(0.1);
+        
+        %Serial port setup complete
+        COMsetup = 1;
+    end
     
+    % recording enabled
+    global start
+    global syspause
+    start = 1;
+    syspause = 0;
+    % enable stopping and pausing
+    set(handles.pushbutton1, 'Enable', 'On');
+	set(handles.pushbutton3, 'Enable', 'On');
+    set(handles.pushbutton2, 'Enable', 'Off');
+    % main control loop
+    while(start == 1)
+        disp('Recording enabled');
+        % Check is Pause is pressed
+        while(syspause == 1)
+           %disp('System paused');
+           pause(0.1);
+        end
+        % Main recording loop
+        
+        pause(1);
+    end
+    
+    set(handles.pushbutton1, 'Enable', 'Off');
+	set(handles.pushbutton3, 'Enable', 'Off');
+    set(handles.pushbutton2, 'Enable', 'On');
+
 end
-% hold on
-
-
-% plot(signal, '-or');
-% plot(d); 
-
-% Close the serial port.
-fclose(s); %close the serial port
+   
+% disp('Now plotting data\n');
+% % Set the COM interface
+% s = serial('COM9');
+% set(s, 'InputBufferSize', 4096);
+% set(s, 'FlowControl', 'hardware');
+% set(s, 'BaudRate', 115200);
+% set(s, 'Parity', 'none');
+% set(s, 'DataBits', 8);
+% set(s, 'StopBit', 1);
+% set(s, 'Timeout', 1);
+% 
+% % Check the properties of the COM interface
+% disp(get(s,'Name'));
+% prop(1)=(get(s,'BaudRate'));
+% prop(2)=(get(s,'DataBits'));
+% prop(3)=(get(s, 'StopBit'));
+% prop(4)=(get(s, 'InputBufferSize'));
+% disp(['Port Setup Done!',num2str(prop)]);
+% 
+% %Open the serial port
+% fopen(s);           
+% 
+% % Design the filter
+% flp = 300;
+% fhi = 6000;
+% npts = 2048;
+% delt = 1/20000;
+% n = 2;
+% fnq = 1/(2*delt);
+% Wn = [flp/fnq fhi/fnq];
+% [b,a] = butter(n, Wn);
+% 
+% % Real time plot
+% n = 0;
+% t = 0;
+% % x = linspace(t, t + 0.2, 4096);
+% % signal = fread(s, 4096);
+% % filt_signal = filter(b, a, signal);
+% % set(gcf, 'color', 'white');
+% % drawnow;
+% % plot(x, filt_signal,'-dk'), axis([t t + 0.2 -150 150]);
+% % grid on;
+% % title('Sine Wave');
+% % xlabel('Time');
+% % ylabel('Amplitude');
+% % t = t + 0.02;
+% % while (n < 200)
+% %     %x = linspace(0, 0.2, 4096);
+% % %     signal_temp = fread(s, 512);
+% % %     signal = [signal; signal_temp];
+% % %     signal = signal(end-4096+1:end);
+% %     signal = fread(s);
+% %     x = linspace(0, 0.2, length(signal));
+% %     filt_signal = filter(b, a, signal);
+% %     %set(gcf, 'color', 'white');
+% %     drawnow;
+% %     axes(handles.axes2);
+% %     plot(x, filt_signal,'-'), axis([0 0.2 -127 127]);
+% %     grid on;
+% %     title('Sine Wave');
+% %     xlabel('Time');
+% %     ylabel('Amplitude');
+% %     n = n + 1;
+% % %     t = t + 0.02;
+% %    % t = t + 0.2;
+% %     pause(0.1);
+% %     
+% % end
+% % hold on
+% while( n < 200)
+%     signal_0 = [];
+%     signal_1 = [];
+%     signal_2 = [];
+%     signal_3 = [];
+%     active_sign = [];
+%     signal = fread(s);
+%     for i=1:1:length(signal)
+%         if(signal(i)==0)
+%             active_sign = 0;
+%             continue;
+%             elseif(signal(i)==1)
+%             active_sign = 1;
+%             continue;
+%             elseif(signal(i)==2)
+%             active_sign = 2;
+%             continue;
+%             elseif(signal(i)==3)
+%             active_sign = 3;
+%             continue;
+%         end
+%         if(active_sign==0)
+%             signal_0 = [signal_0 signal(i)];
+%         end
+%         if(active_sign==1)
+%             signal_1 = [signal_1 signal(i)];
+%         end
+%         if(active_sign==2)
+%             signal_2 = [signal_2 signal(i)];
+%         end
+%         if(active_sign==3)
+%             signal_3 = [signal_3 signal(i)];
+%         end
+%     end
+%     axes(handles.axes2);
+%     x = linspace(0, 0.2, length(signal_0));
+%     %signal_0 = filter(b, a, signal_0);
+%     plot(x, signal_0,'-'), axis([0 0.2 150 300]);
+%     axes(handles.axes3);
+%     x = linspace(0, 0.2, length(signal_1));
+%     %signal_1 = filter(b, a, signal_1);
+%     plot(x, signal_1,'-'), axis([0 0.2 150 300]);
+% 	axes(handles.axes4);
+%     x = linspace(0, 0.2, length(signal_2));
+%     %signal_2 = filter(b, a, signal_2);
+%     plot(x, signal_2,'-'), axis([0 0.2 -127 127]);
+%     axes(handles.axes5);
+%     x = linspace(0, 0.2, length(signal_3));
+%     %signal_3 = filter(b, a, signal_3);
+%     plot(x, signal_3,'-'), axis([0 0.2 -127 127]);
+%     n = n + 1;
+% end
+% 
+% 
+% % plot(signal, '-or');
+% % plot(d); 
+% 
+% % Close the serial port.
+% fclose(s); %close the serial port
 
 
 % --- Executes on button press in pushbutton3.
@@ -484,6 +1272,33 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global syspause
+syspause = 1;
+set(handles.pushbutton2, 'Enable', 'On');
+set(handles.pushbutton3, 'Enable', 'Off');
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 
 
@@ -499,6 +1314,70 @@ function edit3_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function edit3_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit1_Callback(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit1 as text
+%        str2double(get(hObject,'String')) returns contents of edit1 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in radiobutton1.
+function radiobutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton1
+
+
+% --- Executes on button press in radiobutton2.
+function radiobutton2_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton2
+
+
+
+function edit7_Callback(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit7 as text
+%        str2double(get(hObject,'String')) returns contents of edit7 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit7_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -555,93 +1434,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in radiobutton1.
-function radiobutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton1
-
-
-% --- Executes on button press in radiobutton2.
-function radiobutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton2
-
-
-
-function edit7_Callback(hObject, eventdata, handles)
-% hObject    handle to edit7 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit7 as text
-%        str2double(get(hObject,'String')) returns contents of edit7 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit7_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit7 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit8_Callback(hObject, eventdata, handles)
-% hObject    handle to edit8 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit8 as text
-%        str2double(get(hObject,'String')) returns contents of edit8 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit8_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit8 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit9_Callback(hObject, eventdata, handles)
-% hObject    handle to edit9 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit9 as text
-%        str2double(get(hObject,'String')) returns contents of edit9 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit9_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit9 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 % --- Executes during object creation, after setting all properties.
 function figure1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -650,29 +1442,29 @@ function figure1_CreateFcn(hObject, eventdata, handles)
 
 
 % --------------------------------------------------------------------
-function uipanel1_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to uipanel1 (see GCBO)
+function uipanel2_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to uipanel2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 % --- Executes during object creation, after setting all properties.
-function uipanel1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to uipanel1 (see GCBO)
+function uipanel2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uipanel2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
 
 % --- Executes during object deletion, before destroying properties.
-function uipanel1_DeleteFcn(hObject, eventdata, handles)
-% hObject    handle to uipanel1 (see GCBO)
+function uipanel2_DeleteFcn(hObject, eventdata, handles)
+% hObject    handle to uipanel2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
 function uipanel3_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to uipanel3 (see GCBO)
+% hObject    handle to uipanel2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
