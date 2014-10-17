@@ -1231,34 +1231,53 @@ else
         if(numofchannels >= 1)
             axes(handles.axes2);
             x = linspace(0, 0.2, length(signal_0));
-            fwrite(file_0, signal_0, 'uint8');
+            if(savetofile == 1)
+                fwrite(file_0, signal_0, 'uint8');
+            end
             signal_0 = filtfilt(b, a, signal_0);  
             plot(x, signal_0,'-'), axis([0 0.1 -150 150]);
         end
         if(numofchannels >= 2)
             axes(handles.axes3);
             x = linspace(0, 0.2, length(signal_1));
-            fwrite(file_1, signal_0, 'uint8');
+            if(savetofile == 1)
+                fwrite(file_1, signal_0, 'uint8');
+            end
             signal_1 = filtfilt(b, a, signal_1);
             plot(x, signal_1,'-'), axis([0 0.1 -150 150]);
         end
         if(numofchannels >= 3)
             axes(handles.axes4);
             x = linspace(0, 0.2, length(signal_2));
-            fwrite(file_2, signal_0, 'uint8');
+            if(sabetofile == 1)
+                fwrite(file_2, signal_0, 'uint8');
+            end
             signal_2 = filtfilt(b, a, signal_2);
             plot(x, signal_2,'-'), axis([0 0.1 -150 150]);
         end
         if(numofchannels >= 4)
             axes(handles.axes5);
             x = linspace(0, 0.2, length(signal_3));
-            fwrite(file_3, signal_0, 'uint8');
+            if(savetofile == 1)
+                fwrite(file_3, signal_0, 'uint8');
+            end
             signal_3 = filtfilt(b, a, signal_3);
             plot(x, signal_3,'-'), axis([0 0.1 -150 150]);
         end
     end
     
-    fclose(file_0);
+    if(numofchannels >= 1)
+        fclose(file_0);
+    end
+    if(numofchannels >= 2)
+        fclose(file_1);
+    end    
+    if(numofchannels >= 3)
+        fclose(file_2);
+    end
+    if(numofchannels >= 4)
+        fclose(file_3);
+    end    
     
     set(handles.pushbutton1, 'Enable', 'Off');
 	set(handles.pushbutton3, 'Enable', 'Off');
