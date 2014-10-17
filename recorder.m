@@ -22,7 +22,7 @@ function varargout = recorder(varargin)
 
 % Edit the above text to modify the response to help recorder
 
-% Last Modified by GUIDE v2.5 16-Oct-2014 16:57:18
+% Last Modified by GUIDE v2.5 17-Oct-2014 01:09:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -67,6 +67,10 @@ guidata(hObject, handles);
 set(handles.edit1, 'String', num2str(handles.countChannels));
 set(handles.pushbutton3, 'Enable', 'off');
 set(handles.pushbutton1, 'Enable', 'off');
+set(handles.radiobutton16, 'Value', 1);
+set(handles.radiobutton3, 'Value', 1);
+
+
 global COMsetup
 COMsetup = 0;
 
@@ -1001,6 +1005,10 @@ set(handles.checkbox29, 'Enable', 'On');
 set(handles.checkbox30, 'Enable', 'On');
 set(handles.checkbox31, 'Enable', 'On');
 set(handles.checkbox32, 'Enable', 'On');
+set(handles.radiobutton16, 'Enable', 'On');
+set(handles.radiobutton15, 'Enable', 'On');
+set(handles.radiobutton3, 'Enable', 'On');
+set(handles.radiobutton4, 'Enable', 'On');
 
 
 % --- Executes on button press in pushbutton2.
@@ -1020,8 +1028,18 @@ else
         numofchannels = length(handles.selectedChannels)
         samplingfrequency = str2num(get(handles.edit2, 'String'))
         buffersize = str2num(get(handles.edit3, 'String'))
-        flp = str2num(get(handles.edit4, 'String'));
-        fhp = str2num(get(handles.edit5, 'String'));
+        flp = str2num(get(handles.edit4, 'String'))
+        fhp = str2num(get(handles.edit5, 'String'))
+        if(get(handles.radiobutton16, 'Value') == 1)
+            gainsetting = 1
+        else
+            gainsetting = 2
+        end
+        if(get(handles.radiobutton3, 'Value') == 1)
+            savetofile = 0
+        else
+            savetofile = 1
+        end
         
         % Disable any changes
         set(handles.edit2, 'Enable', 'Off');
@@ -1060,6 +1078,10 @@ else
         set(handles.checkbox30, 'Enable', 'Off');
         set(handles.checkbox31, 'Enable', 'Off');
         set(handles.checkbox32, 'Enable', 'Off');
+        set(handles.radiobutton16, 'Enable', 'Off');
+        set(handles.radiobutton15, 'Enable', 'Off');
+        set(handles.radiobutton3, 'Enable', 'Off');
+        set(handles.radiobutton4, 'Enable', 'Off');
         
         % set display properties
         for i=1:numofchannels
@@ -1079,7 +1101,7 @@ else
         
         %set up COM port
         s = serial('COM9');
-        set(s, 'InputBufferSize', 4096);
+        set(s, 'InputBufferSize', 8192);
         set(s, 'BaudRate', 115200);
         set(s, 'Parity', 'none');
         set(s, 'DataBits', 8);
@@ -1093,6 +1115,31 @@ else
         Wn = [flp/fnq fhp/fnq];
         [b,a] = butter(n, Wn);
         
+        % Create directory and files for storage
+        if(savetofile == 1)
+            foldername = now;
+            foldername = datestr(foldername, 'mm-dd-yy HH.MM.SS.PM');
+            mkdir('data',  foldername); % make new folder
+            null = [];
+            % make binary files for storing data
+            for i=1:numofchannels
+                filename = strcat('Channel_', num2str(handles.selectedChannels(i)),'.data');
+                filepath = fullfile('data',foldername,filename);
+                if(i==1)
+                    file_0 = fopen(filepath, 'wb');
+                end
+                if(i==2)
+                    file_1 = fopen(filepath, 'wb');
+                end
+                if(i==3)
+                    file_2 = fopen(filepath, 'wb');
+                end
+                if(i==4)
+                    file_3 = fopen(filepath, 'wb');
+                end
+            end
+        end
+        
         fopen(s); % Open the COM port
        
         %Transmit configuration parameters
@@ -1100,10 +1147,12 @@ else
         pause(0.1);
         fwrite(s, [2 buffersize], 'uint16');
         pause(0.1);
-        fwrite(s, [1 numofchannels], 'uint16');
+        fwrite(s, [1 numofchannels handles.selectedChannels], 'uint16');
+        pause(0.1);
+        fwrite(s, [4 gainsetting],'uint16');
         pause(0.1);
         fwrite(s, 10, 'uint8');
-        pause(0.1);
+        pause(1);
         
         %Serial port setup complete
         COMsetup = 1;
@@ -1120,151 +1169,103 @@ else
     set(handles.pushbutton2, 'Enable', 'Off');
     % main control loop
     while(start == 1)
-        disp('Recording enabled');
         % Check is Pause is pressed
         while(syspause == 1)
            %disp('System paused');
            pause(0.1);
         end
         % Main recording loop
-        
-        pause(1);
+        signal_0 = [];
+	    signal_1 = [];
+        signal_2 = [];
+        signal_3 = [];
+        active_sign = [];
+        signal = fread(s);
+        % parse signal;
+        for i = 1 : 1 : length(signal)
+            if(numofchannels >= 1)
+                if(signal(i) == handles.selectedChannels(1))
+                    active_sign = handles.selectedChannels(1);
+                    continue;
+                end
+            end
+            if(numofchannels >= 2)
+                if(signal(i)==handles.selectedChannels(2))
+                    active_sign = handles.selectedChannels(2);
+                    continue;
+                end
+            end
+            if(numofchannels >= 3)
+                if(signal(i)==handles.selectedChannels(3))
+                    active_sign = handles.selectedChannels(3);
+                    continue;
+                end
+            end
+            if(numofchannels >=4)
+                if(signal(i)==handles.selectedChannels(4))
+                    active_sign = handles.selectedChannels(4);
+                    continue;
+                end
+            end
+            if(numofchannels >= 1)
+                if(active_sign == handles.selectedChannels(1))
+                    signal_0 = [signal_0 signal(i)];
+                end
+            end
+            if(numofchannels >= 2)
+                if(active_sign == handles.selectedChannels(2))
+                    signal_1 = [signal_1 signal(i)];
+                end
+            end
+            if(numofchannels >= 3)
+                if(active_sign == handles.selectedChannels(3))
+                    signal_2 = [signal_2 signal(i)];
+                end
+            end
+            if(numofchannels >= 4)
+                if(active_sign == handles.selectedChannels(4))
+                    signal_3 = [signal_3 signal(i)];
+                end
+            end
+        end
+        if(numofchannels >= 1)
+            axes(handles.axes2);
+            x = linspace(0, 0.2, length(signal_0));
+            fwrite(file_0, signal_0, 'uint8');
+            signal_0 = filtfilt(b, a, signal_0);  
+            plot(x, signal_0,'-'), axis([0 0.1 -150 150]);
+        end
+        if(numofchannels >= 2)
+            axes(handles.axes3);
+            x = linspace(0, 0.2, length(signal_1));
+            fwrite(file_1, signal_0, 'uint8');
+            signal_1 = filtfilt(b, a, signal_1);
+            plot(x, signal_1,'-'), axis([0 0.1 -150 150]);
+        end
+        if(numofchannels >= 3)
+            axes(handles.axes4);
+            x = linspace(0, 0.2, length(signal_2));
+            fwrite(file_2, signal_0, 'uint8');
+            signal_2 = filtfilt(b, a, signal_2);
+            plot(x, signal_2,'-'), axis([0 0.1 -150 150]);
+        end
+        if(numofchannels >= 4)
+            axes(handles.axes5);
+            x = linspace(0, 0.2, length(signal_3));
+            fwrite(file_3, signal_0, 'uint8');
+            signal_3 = filtfilt(b, a, signal_3);
+            plot(x, signal_3,'-'), axis([0 0.1 -150 150]);
+        end
     end
+    
+    fclose(file_0);
     
     set(handles.pushbutton1, 'Enable', 'Off');
 	set(handles.pushbutton3, 'Enable', 'Off');
     set(handles.pushbutton2, 'Enable', 'On');
 
 end
-   
-% disp('Now plotting data\n');
-% % Set the COM interface
-% s = serial('COM9');
-% set(s, 'InputBufferSize', 4096);
-% set(s, 'FlowControl', 'hardware');
-% set(s, 'BaudRate', 115200);
-% set(s, 'Parity', 'none');
-% set(s, 'DataBits', 8);
-% set(s, 'StopBit', 1);
-% set(s, 'Timeout', 1);
-% 
-% % Check the properties of the COM interface
-% disp(get(s,'Name'));
-% prop(1)=(get(s,'BaudRate'));
-% prop(2)=(get(s,'DataBits'));
-% prop(3)=(get(s, 'StopBit'));
-% prop(4)=(get(s, 'InputBufferSize'));
-% disp(['Port Setup Done!',num2str(prop)]);
-% 
-% %Open the serial port
-% fopen(s);           
-% 
-% % Design the filter
-% flp = 300;
-% fhi = 6000;
-% npts = 2048;
-% delt = 1/20000;
-% n = 2;
-% fnq = 1/(2*delt);
-% Wn = [flp/fnq fhi/fnq];
-% [b,a] = butter(n, Wn);
-% 
-% % Real time plot
-% n = 0;
-% t = 0;
-% % x = linspace(t, t + 0.2, 4096);
-% % signal = fread(s, 4096);
-% % filt_signal = filter(b, a, signal);
-% % set(gcf, 'color', 'white');
-% % drawnow;
-% % plot(x, filt_signal,'-dk'), axis([t t + 0.2 -150 150]);
-% % grid on;
-% % title('Sine Wave');
-% % xlabel('Time');
-% % ylabel('Amplitude');
-% % t = t + 0.02;
-% % while (n < 200)
-% %     %x = linspace(0, 0.2, 4096);
-% % %     signal_temp = fread(s, 512);
-% % %     signal = [signal; signal_temp];
-% % %     signal = signal(end-4096+1:end);
-% %     signal = fread(s);
-% %     x = linspace(0, 0.2, length(signal));
-% %     filt_signal = filter(b, a, signal);
-% %     %set(gcf, 'color', 'white');
-% %     drawnow;
-% %     axes(handles.axes2);
-% %     plot(x, filt_signal,'-'), axis([0 0.2 -127 127]);
-% %     grid on;
-% %     title('Sine Wave');
-% %     xlabel('Time');
-% %     ylabel('Amplitude');
-% %     n = n + 1;
-% % %     t = t + 0.02;
-% %    % t = t + 0.2;
-% %     pause(0.1);
-% %     
-% % end
-% % hold on
-% while( n < 200)
-%     signal_0 = [];
-%     signal_1 = [];
-%     signal_2 = [];
-%     signal_3 = [];
-%     active_sign = [];
-%     signal = fread(s);
-%     for i=1:1:length(signal)
-%         if(signal(i)==0)
-%             active_sign = 0;
-%             continue;
-%             elseif(signal(i)==1)
-%             active_sign = 1;
-%             continue;
-%             elseif(signal(i)==2)
-%             active_sign = 2;
-%             continue;
-%             elseif(signal(i)==3)
-%             active_sign = 3;
-%             continue;
-%         end
-%         if(active_sign==0)
-%             signal_0 = [signal_0 signal(i)];
-%         end
-%         if(active_sign==1)
-%             signal_1 = [signal_1 signal(i)];
-%         end
-%         if(active_sign==2)
-%             signal_2 = [signal_2 signal(i)];
-%         end
-%         if(active_sign==3)
-%             signal_3 = [signal_3 signal(i)];
-%         end
-%     end
-%     axes(handles.axes2);
-%     x = linspace(0, 0.2, length(signal_0));
-%     %signal_0 = filter(b, a, signal_0);
-%     plot(x, signal_0,'-'), axis([0 0.2 150 300]);
-%     axes(handles.axes3);
-%     x = linspace(0, 0.2, length(signal_1));
-%     %signal_1 = filter(b, a, signal_1);
-%     plot(x, signal_1,'-'), axis([0 0.2 150 300]);
-% 	axes(handles.axes4);
-%     x = linspace(0, 0.2, length(signal_2));
-%     %signal_2 = filter(b, a, signal_2);
-%     plot(x, signal_2,'-'), axis([0 0.2 -127 127]);
-%     axes(handles.axes5);
-%     x = linspace(0, 0.2, length(signal_3));
-%     %signal_3 = filter(b, a, signal_3);
-%     plot(x, signal_3,'-'), axis([0 0.2 -127 127]);
-%     n = n + 1;
-% end
-% 
-% 
-% % plot(signal, '-or');
-% % plot(d); 
-% 
-% % Close the serial port.
-% fclose(s); %close the serial port
+  
 
 
 % --- Executes on button press in pushbutton3.
@@ -1487,3 +1488,24 @@ function pushbutton2_KeyPressFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 disp('wefsdf');
+
+
+% --- Executes when selected object is changed in uipanel15.
+function uipanel15_SelectionChangeFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in uipanel15 
+% eventdata  structure with the following fields (see UIBUTTONGROUP)
+%	EventName: string 'SelectionChanged' (read only)
+%	OldValue: handle of the previously selected object or empty if none was selected
+%	NewValue: handle of the currently selected object
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes when selected object is changed in uipanel16.
+function uipanel16_SelectionChangeFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in uipanel16 
+% eventdata  structure with the following fields (see UIBUTTONGROUP)
+%	EventName: string 'SelectionChanged' (read only)
+%	OldValue: handle of the previously selected object or empty if none was selected
+%	NewValue: handle of the currently selected object
+% handles    structure with handles and user data (see GUIDATA)
+

@@ -82,8 +82,8 @@ while(n < 2)
 %     signal_2 = signal;
 %     signal = fread(s,256);
 %     signal_3 = signasignal
-    for i=1:1:length(signal)
-        if(signal(i)==0)
+    for i = 1 : 1 : length(signal)
+        if(signal(i) == 0)
             active_sign = 0;
             continue;
         end
