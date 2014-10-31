@@ -1240,12 +1240,6 @@ else
             else
                 plot(x, (signal_0.*790)./1000,'-'), axis([0 0.4 -200 200]), grid on, xlabel('seconds'), ylabel('uV');
             end
-            x = linspace(0, 0.2, length(signal_0));
-            if(savetofile == 1)
-                fwrite(file_0, signal_0, 'uint8');
-            end
-            signal_0 = filtfilt(b, a, signal_0);  
-            plot(x, signal_0,'-'), axis([0 0.1 -150 150]);
         end
         if(numofchannels >= 2)
             axes(handles.axes3);
@@ -1290,19 +1284,7 @@ else
         if(numofchannels >= 4)
             fclose(file_3);
         end    
-    end
-    if(numofchannels >= 1)
-        fclose(file_0);
-    end
-    if(numofchannels >= 2)
-        fclose(file_1);
-    end    
-    if(numofchannels >= 3)
-        fclose(file_2);
-    end
-    if(numofchannels >= 4)
-        fclose(file_3);
-    end    
+    end  
     
     set(handles.pushbutton1, 'Enable', 'Off');
 	set(handles.pushbutton3, 'Enable', 'Off');
